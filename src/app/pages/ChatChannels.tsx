@@ -5,13 +5,9 @@ import { Chat } from "@/app/pages/Chat"
 import { Button } from "@/components/ui/button"
 import { useSocket } from "@/hooks/useSocket"
 
-interface ChatChannelsProps {
-	handleReturnToSplash: () => void
-}
-
 const DEFAULT_CHANNELS = ["general", "tech", "philosophy"]
 
-export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
+export function ChatChannels() {
 	const [selectedChannel, setSelectedChannel] = useState<string>("general")
 	const [pinned, setPinned] = useState(() => {
 		const stored = localStorage.getItem("chatroom_sidebar_pinned")
@@ -130,10 +126,6 @@ export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 					#{channel}
 				</Button>
 			))}
-			<hr className="my-2" />
-			<Button variant="secondary" onClick={handleReturnToSplash}>
-				Back
-			</Button>
 		</div>
 	)
 

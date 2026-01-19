@@ -23,16 +23,10 @@ function AppContent() {
 		setPage(Page.Chat)
 	}
 
-	const handleReturnToSplash = () => {
-		setPage(Page.Splash)
-	}
-
 	return (
 		<div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
 			{page === Page.Splash && <Splash onJoinChat={handleJoinChat} />}
-			{page === Page.Chat && (
-				<ChatChannels handleReturnToSplash={handleReturnToSplash} />
-			)}
+			{page === Page.Chat && <ChatChannels />}
 		</div>
 	)
 }
