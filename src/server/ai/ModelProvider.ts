@@ -213,14 +213,23 @@ type ChatMessages = {
 }
 
 function isWebSearchEnabledForModel(model: ModelType): boolean {
-	return (
-		model === "gpt-4.1" ||
-		model.startsWith("claude-opus-4") ||
-		model.startsWith("claude-sonnet-4") ||
-		model === "claude-3-7-sonnet-20250219" ||
-		model === "claude-3-5-sonnet-latest" ||
-		model === "claude-3-5-haiku-latest"
-	)
+	// Claude 4.5 family supports web search
+	if (model.startsWith("claude-opus-4-5") || model.startsWith("claude-sonnet-4-5") || model.startsWith("claude-haiku-4-5")) {
+		return true
+	}
+	// Claude 4.x legacy supports web search
+	if (model.startsWith("claude-opus-4") || model.startsWith("claude-sonnet-4")) {
+		return true
+	}
+	// Claude 3.7 Sonnet supports web search
+	if (model.startsWith("claude-3-7-sonnet")) {
+		return true
+	}
+	// GPT-4.1 supports web search
+	if (model === "gpt-4.1") {
+		return true
+	}
+	return false
 }
 
 function toAnthropicMessages(
