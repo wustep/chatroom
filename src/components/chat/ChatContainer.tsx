@@ -1,7 +1,6 @@
 import { ChatMessage } from "./ChatMessage"
 import { ReactNode, RefObject } from "react"
 
-import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface Player {
@@ -26,8 +25,6 @@ interface ChatContainerProps {
 	username?: string
 	isConnected: boolean
 	players: Player[]
-	onAccuseClick?: () => void
-	showAccuseButton?: boolean
 	scrollAreaRef: RefObject<HTMLDivElement | null>
 	onScroll: () => void
 	getPlayerForMessage: (senderId: string) => Player
@@ -35,7 +32,6 @@ interface ChatContainerProps {
 	children?: ReactNode
 	headerRightContent?: ReactNode
 	padForMenu?: boolean
-	isGameMode?: boolean
 }
 
 export function ChatContainer({
@@ -43,8 +39,6 @@ export function ChatContainer({
 	username,
 	isConnected,
 	players,
-	onAccuseClick,
-	showAccuseButton = true,
 	scrollAreaRef,
 	onScroll,
 	getPlayerForMessage,
@@ -52,7 +46,6 @@ export function ChatContainer({
 	children,
 	headerRightContent,
 	padForMenu = false,
-	isGameMode = false,
 }: ChatContainerProps) {
 	return (
 		<div
@@ -65,9 +58,7 @@ export function ChatContainer({
 					padForMenu ? "pl-13" : "pl-4"
 				}`}
 			>
-				<h2 className="text-lg font-semibold">
-					{isGameMode ? "Game" : "Chat"}
-				</h2>
+				<h2 className="text-lg font-semibold">Chat</h2>
 				<div className="flex items-center space-x-2">
 					{username && (
 						<span className="text-sm text-muted-foreground">
@@ -75,16 +66,6 @@ export function ChatContainer({
 						</span>
 					)}
 					{headerRightContent}
-					{showAccuseButton && onAccuseClick && (
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={onAccuseClick}
-							disabled={!isConnected || players.length <= 1 || disabled}
-						>
-							Accuse
-						</Button>
-					)}
 				</div>
 			</header>
 

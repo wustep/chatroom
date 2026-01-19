@@ -161,7 +161,6 @@ export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 				</aside>
 				<div className="flex-1 h-full">
 					<Chat
-						isGameMode={false}
 						padForMenu={false}
 						messages={messagesByChannel[getChannelId(selectedChannel)] || []}
 						players={playersByChannel[getChannelId(selectedChannel)] || []}
@@ -170,8 +169,6 @@ export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 						}
 						usernameFromHook={username || ""}
 						isConnected={isConnected}
-						currentUserIdFromHook={null}
-						activeChannelId={getChannelId(selectedChannel)}
 					/>
 				</div>
 			</div>
@@ -200,7 +197,6 @@ export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 			</Button>
 
 			<Chat
-				isGameMode={false}
 				padForMenu={true}
 				messages={messagesByChannel[getChannelId(selectedChannel)] || []}
 				players={playersByChannel[getChannelId(selectedChannel)] || []}
@@ -209,8 +205,6 @@ export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 				}
 				usernameFromHook={username || ""}
 				isConnected={isConnected}
-				currentUserIdFromHook={null}
-				activeChannelId={getChannelId(selectedChannel)}
 			/>
 		</>
 	)

@@ -1,6 +1,6 @@
-# Prompt Template Engine 🎨
+# Prompt Template Engine
 
-The Turing project now uses a flexible Handlebars-style template system for AI prompts, allowing for dynamic persona customization and reusable prompt templates.
+Chatroom uses a flexible Handlebars-style template system for AI prompts, allowing for dynamic persona customization and reusable prompt templates.
 
 ## Features
 
@@ -71,15 +71,8 @@ const result = PromptTemplateEngine.render(template, data)
 
 ## Default Templates
 
-### Game Response (`game-response.hbs`)
-Used for Turing game mode responses. Includes:
-- Game rules and strategy
-- Full persona details
-- Conversation history
-- Accusation mechanics
-
 ### Chat Response (`chat-response.hbs`)
-Used for general chat conversations. Includes:
+Used for chat conversations. Includes:
 - Personality details
 - Interests and communication style
 - Conversation guidelines
@@ -95,7 +88,6 @@ export const alexPersona = {
   name: "Alex",
   // ... other properties
   templates: {
-    game: "custom/alex-game.hbs",
     chat: "custom/alex-chat.hbs",
     starter: "custom/alex-starter.hbs"
   }
@@ -115,8 +107,7 @@ Recent chat: {{{conversationHistory}}}
 const response = await chatService.generateResponseWithContext(
   "Alex",
   messages,
-  "chat",
-  customTemplate  // Custom template override
+  customTemplate
 )
 ```
 
@@ -129,13 +120,13 @@ const personaManager = PersonaManager.getInstance()
 
 // Set custom template
 personaManager.setPersonaTemplate(
-  "Alex", 
-  "game", 
-  "templates/alex-competitive.hbs"
+  "Alex",
+  "chat",
+  "templates/alex-conversational.hbs"
 )
 
 // Get template path
-const templatePath = personaManager.getPersonaTemplate("Alex", "game")
+const templatePath = personaManager.getPersonaTemplate("Alex", "chat")
 ```
 
 ## Template Priority System
@@ -144,10 +135,10 @@ Templates are resolved in this order:
 
 1. **Runtime Custom Template** (highest priority)
    - Passed directly to `generateResponseWithContext()`
-   
+
 2. **Persona-Specific Template**
    - Defined in `persona.templates.{type}`
-   
+
 3. **Default Template** (lowest priority)
    - Built-in templates in `/templates/` directory
 
@@ -169,24 +160,17 @@ Templates receive this data object:
       emojiUsage: string
       typingPatterns: string
     }
-    gameSettings: {
-      enabled: boolean
-      autoInvite: boolean
-      strategy: string
-    }
     chatSettings: {
       enabled: boolean
       autoInvite: boolean
     }
     templates?: {
-      game?: string
       chat?: string
       starter?: string
     }
     // Any additional custom fields
   },
   name: string,  // Convenience field (same as persona.name)
-  displayName?: string,  // Optional display name override
   conversationHistory: string,  // Formatted chat history
   // Any additional context fields
 }
@@ -194,16 +178,10 @@ Templates receive this data object:
 
 ## Advanced Examples
 
-### Conditional Mode Template
+### Conditional Template
 
 ```handlebars
-{{#if isGameMode}}
-🎮 **GAME MODE** - Convince everyone you're human!
-
-Game Strategy: {{persona.gameSettings.strategy}}
-{{else}}
 💬 **CHAT MODE** - Have a natural conversation.
-{{/if}}
 
 You are {{name}}.
 {{#if persona.profile}}
@@ -215,7 +193,7 @@ Personality: {{#each persona.personality.traits}}{{this}}{{#unless @last}}, {{/u
 {{/if}}
 
 History: {{{conversationHistory}}}
-{{name}}: 
+{{name}}:
 ```
 
 ### Dynamic Template Generation
@@ -227,7 +205,7 @@ function createMoodBasedTemplate(mood: "excited" | "calm" | "serious"): string {
     calm: "Keep a relaxed, thoughtful tone. Take your time.",
     serious: "Be focused and professional. Stick to facts."
   }
-  
+
   return `
 You are {{name}}, and you're feeling ${mood} today.
 ${moodStyles[mood]}
@@ -253,23 +231,8 @@ The template engine includes robust error handling:
 ## Best Practices
 
 1. **Keep templates focused** - One template per specific use case
-2. **Use descriptive names** - `alex-gaming-mode.hbs` vs `template1.hbs`
+2. **Use descriptive names** - `alex-conversational.hbs` vs `template1.hbs`
 3. **Test with edge cases** - What if personality is undefined?
 4. **Include fallbacks** - Always have an `{{else}}` for important conditionals
 5. **Document custom templates** - Comment complex logic
 6. **Version control templates** - Treat them like code!
-
-## Examples
-
-Example templates can be found in the `examples` directory. A good starting
-point is [`examples/alex-game-short.hbs`](examples/alex-game-short.hbs), which
-demonstrates:
-- Setting custom templates
-- Runtime template overrides
-- Dynamic template generation
-- Conditional rendering
-- Error handling
-
-## Migration Notes
-
-The old `formatPersonalityDetails()` and hardcoded prompt functions have been replaced with this template system. Existing personas will work automatically with the new default templates. 

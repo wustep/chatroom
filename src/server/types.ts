@@ -1,5 +1,5 @@
 /**
- * Core types for the Turing game server
+ * Core types for the Chatroom server
  */
 
 export interface ChatMessage {

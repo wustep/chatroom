@@ -228,23 +228,10 @@ export function sendSystemPrompt(roomId: string, text: string): void {
 	io.to(roomId).emit("newMessage", message)
 }
 
-export function isGameRoom(roomId: string): boolean {
-	return roomId.startsWith("game_") || roomId.startsWith("playground_game_")
-}
-
 export function isPlaygroundRoom(roomId: string): boolean {
 	return roomId.startsWith("playground_")
 }
 
 export function isChatRoom(roomId: string): boolean {
 	return roomId.startsWith("chat_") || roomId.startsWith("playground_chat_")
-}
-
-export function getRoomMode(roomId: string): "game" | "chat" {
-	if (isGameRoom(roomId)) {
-		return "game"
-	} else if (isChatRoom(roomId)) {
-		return "chat"
-	}
-	return "chat"
 }

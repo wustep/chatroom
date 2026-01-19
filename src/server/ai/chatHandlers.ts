@@ -4,13 +4,7 @@
 import { ChatService } from "@/server/ai/ChatService"
 import * as config from "@/server/config/config"
 import { getRecentMessages } from "@/server/core/messages"
-import {
-	getRoom,
-	getRoomMode,
-	isChatRoom,
-	isGameRoom,
-	isPlaygroundRoom,
-} from "@/server/core/rooms"
+import { getRoom, isChatRoom, isPlaygroundRoom } from "@/server/core/rooms"
 import { getSocketIo, rooms } from "@/server/core/state"
 import { Player, Room } from "@/server/types"
 
@@ -63,24 +57,16 @@ export async function generateAiResponse(
 			})
 		}
 		// Otherwise infer from channel name
-		else {
-			let inferredTopic: string | null = null
-			if (roomId.startsWith("chat_")) {
-				inferredTopic = roomId.replace("chat_", "")
-			} else if (roomId.startsWith("game_")) {
-				inferredTopic = "Turing game - try to act human"
-			}
-
-			if (inferredTopic) {
-				recentMessages.unshift({
-					id: Date.now() - 1,
-					sender: "System",
-					senderId: "system",
-					text: `You are in the #${inferredTopic} channel. Keep the conversation related to ${inferredTopic}. Your responses should focus on this topic, and if the conversation drifts, gently redirect it back to discussing ${inferredTopic}. Share relevant information, opinions or experiences specifically about ${inferredTopic}.`,
-					type: "system",
-					timestamp: Date.now() - 1,
-				})
-			}
+		else if (roomId.startsWith("chat_")) {
+			const inferredTopic = roomId.replace("chat_", "")
+			recentMessages.unshift({
+				id: Date.now() - 1,
+				sender: "System",
+				senderId: "system",
+				text: `You are in the #${inferredTopic} channel. Keep the conversation related to ${inferredTopic}. Your responses should focus on this topic, and if the conversation drifts, gently redirect it back to discussing ${inferredTopic}. Share relevant information, opinions or experiences specifically about ${inferredTopic}.`,
+				type: "system",
+				timestamp: Date.now() - 1,
+			})
 		}
 
 		// Add typing delay for realism (800-2000ms)
@@ -92,7 +78,6 @@ export async function generateAiResponse(
 				const rawAiMessageText = await chatService.generateResponseWithContext(
 					respondingAI.name,
 					recentMessages,
-					getRoomMode(roomId),
 					customTemplate,
 				)
 
@@ -196,7 +181,6 @@ function scheduleAiToAiResponse(roomId: string, sourceAiPlayer: Player): void {
 			const rawAiMessageText = await chatService.generateResponseWithContext(
 				respondingAI.name,
 				recentMessages,
-				getRoomMode(roomId),
 			)
 
 			// Process the response to remove decision prefix
@@ -310,27 +294,26 @@ export async function startAiConversation(
 		})
 	}
 	// Otherwise infer from channel name
-	else {
-		let inferredTopic: string | null = null
-		if (isChatRoom(roomId)) {
-			inferredTopic = roomId.replace("chat_", "")
-		} else if (isGameRoom(roomId)) {
-			inferredTopic = "Turing game - try to act human"
-		} else if (!isPlaygroundRoom(roomId)) {
-			// treat raw room id as topic for standard chat channels
-			inferredTopic = roomId
-		}
-
-		if (inferredTopic) {
-			recentMessages.unshift({
-				id: Date.now() - 1,
-				sender: "System",
-				senderId: "system",
-				text: `You are in the #${inferredTopic} channel. Keep the conversation related to ${inferredTopic}. Your responses should focus on this topic, and if the conversation drifts, gently redirect it back to discussing ${inferredTopic}. Share relevant information, opinions or experiences specifically about ${inferredTopic}.`,
-				type: "system",
-				timestamp: Date.now() - 1,
-			})
-		}
+	else if (isChatRoom(roomId)) {
+		const inferredTopic = roomId.replace("chat_", "")
+		recentMessages.unshift({
+			id: Date.now() - 1,
+			sender: "System",
+			senderId: "system",
+			text: `You are in the #${inferredTopic} channel. Keep the conversation related to ${inferredTopic}. Your responses should focus on this topic, and if the conversation drifts, gently redirect it back to discussing ${inferredTopic}. Share relevant information, opinions or experiences specifically about ${inferredTopic}.`,
+			type: "system",
+			timestamp: Date.now() - 1,
+		})
+	} else if (!isPlaygroundRoom(roomId)) {
+		// treat raw room id as topic for standard chat channels
+		recentMessages.unshift({
+			id: Date.now() - 1,
+			sender: "System",
+			senderId: "system",
+			text: `You are in the #${roomId} channel. Keep the conversation related to ${roomId}. Your responses should focus on this topic, and if the conversation drifts, gently redirect it back to discussing ${roomId}. Share relevant information, opinions or experiences specifically about ${roomId}.`,
+			type: "system",
+			timestamp: Date.now() - 1,
+		})
 	}
 
 	try {
@@ -338,7 +321,6 @@ export async function startAiConversation(
 		const rawMessageText = await chatService.generateResponseWithContext(
 			aiPlayer.name,
 			recentMessages,
-			getRoomMode(roomId),
 		)
 
 		// Process the response to remove decision prefix

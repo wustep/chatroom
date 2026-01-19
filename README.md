@@ -1,54 +1,54 @@
-# Turing
+# Chatroom
 
-## Concept
-
-Turing is a web-based social deduction game where players must decipher who is human and who is AI.
+Multi-channel AI chat application with personas and theming.
 
 ## Tech Stack
 
-- **Frontend:** React, TypeScript, Vite
-- **UI:** shadcn/ui, Tailwind CSS
-- **Backend:** Express, Socket.io
-- **Tooling:** Storybook, ESLint, Prettier, Vitest
+- **Frontend:** React 19, TypeScript, Vite
+- **UI:** shadcn/ui, Tailwind CSS v4
+- **Backend:** Express 5, Socket.IO
+- **AI:** Anthropic Claude, OpenAI GPT-4
 
 ## Development
 
-To install dependencies, run:
+Install dependencies:
 ```bash
 npm install --legacy-peer-deps
 ```
 
-Commands: 
-```
-npm run start           - start app, storybook, and server
-npm run app             - start app in dev mode
-npm run server          - start server in dev mode
-npm run storybook       - start storybook in dev mode
-npm run build:storybook - build storybook
-npm run build:app       - build app
-npm run build:server    - build server
-npm test                - run tests
+Commands:
+```bash
+npm run dev       # Start app and server in development
+npm run dev:none  # Start without AI models (for UI development)
+npm run build     # Build app and server for production
+npm run lint      # Run ESLint
 ```
 
 ## Model Configuration
 
-The server can be configured to use different AI models. By default, it uses `gpt-4.1-nano`, but you can specify a different model in several ways:
+The server can be configured to use different AI models via the `DEFAULT_MODEL` environment variable or command line flags.
 
-### Option 1: Direct flag (recommended)
-```bash
-npm run start --model o3
+### Environment Variable
+Set `DEFAULT_MODEL` in your `.env` file:
+```
+DEFAULT_MODEL=claude-3-5-sonnet-20241022
 ```
 
-### Option 2: Convenience scripts
+### Command Line
 ```bash
-npm run start:o3        # Use o3 model
-npm run start:gpt4      # Use gpt-4o model  
-npm run start:claude3.5 # Use Claude 3.5 Sonnet
-npm run start:haiku     # Use Claude 3 Haiku
-npm run start:no-model  # Disable AI models
+npm run server -- --model claude-3-5-sonnet-20241022
 ```
 
-### Option 3: Legacy format (still works)
-```bash
-npm run start -- --model o3
-```
+## Personas
+
+AI personas are defined in `src/lib/personas/*.md` files. Each persona has:
+- YAML frontmatter with name, username, and settings
+- Markdown body with profile, personality traits, communication style, etc.
+
+## Chat Commands
+
+Users can use these in-chat:
+- `/join #channel` - Join a channel
+- `/invite PersonaName` - Invite an AI persona
+- `/kick PersonaName` - Remove an AI persona
+- `/topic "New topic"` - Set channel topic

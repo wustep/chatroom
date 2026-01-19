@@ -1,19 +1,16 @@
 import { ModelProvider } from "@/server/ai/ModelProvider"
 import { AIPersona, PersonaManager } from "@/server/ai/PersonaManager"
-import {
-	generateChatResponsePrompt,
-	generateGameResponsePrompt,
-} from "@/server/ai/prompts"
+import { generateChatResponsePrompt } from "@/server/ai/prompts"
 import { ChatMessage } from "@/server/types"
 
 export class ChatService {
 	private static instance: ChatService
 	private modelProvider: ModelProvider
-	private personaManager: PersonaManager // Use PersonaManager instance
+	private personaManager: PersonaManager
 
 	private constructor() {
 		this.modelProvider = ModelProvider.getInstance()
-		this.personaManager = PersonaManager.getInstance() // Get PersonaManager instance
+		this.personaManager = PersonaManager.getInstance()
 	}
 
 	/**
@@ -30,14 +27,12 @@ export class ChatService {
 	 * Generate an AI response with conversation context
 	 * @param responderName The name of the AI responding
 	 * @param conversationHistory Previous messages in the conversation
-	 * @param mode Whether this is "game" or "chat" mode
 	 * @param customTemplate Optional custom template to override defaults
 	 * @returns A promise resolving to the AI's response text
 	 */
 	public async generateResponseWithContext(
 		responderName: string,
 		conversationHistory: ChatMessage[] = [],
-		mode: "game" | "chat",
 		customTemplate?: string,
 		settings?: { model?: string; temperature?: number; maxTokens?: number },
 	): Promise<string> {
@@ -59,23 +54,12 @@ export class ChatService {
 			responderId,
 		)
 
-		// Use the appropriate prompt generator based on context
-		let prompt: string
-
-		if (mode === "game") {
-			prompt = generateGameResponsePrompt(
-				persona,
-				conversationHistory,
-				undefined,
-				customTemplate,
-			)
-		} else {
-			prompt = generateChatResponsePrompt(
-				persona,
-				conversationHistory,
-				customTemplate,
-			)
-		}
+		// Generate the prompt
+		const prompt = generateChatResponsePrompt(
+			persona,
+			conversationHistory,
+			customTemplate,
+		)
 
 		// Extract webSearch setting safely
 		const webSearchEnabled =
@@ -103,7 +87,7 @@ export class ChatService {
 		aiId: string,
 		personaData: Partial<AIPersona>,
 	): Promise<AIPersona> {
-		return this.personaManager.updatePersona(aiId, personaData) // Delegate to PersonaManager
+		return this.personaManager.updatePersona(aiId, personaData)
 	}
 
 	/**

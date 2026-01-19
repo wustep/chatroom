@@ -3,29 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ChatContainer } from "@/components/chat/ChatContainer"
 import { ChatInputBox } from "@/components/chat/ChatInputBox"
 import { PlayersContainer } from "@/components/chat/PlayersContainer"
-import { Button } from "@/components/ui/button"
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select"
 import { DisplayChatMessage, Player } from "@/hooks/useSocket"
 import { getColorKeyForUser } from "@/lib/colors"
 
 interface ChatProps {
-	/** If true, enable game-specific features (accusations, notes). Defaults to true. */
-	isGameMode?: boolean
 	padForMenu?: boolean
 
 	// Props passed from parent (e.g., ChatChannels)
@@ -35,12 +16,9 @@ interface ChatProps {
 	messages?: DisplayChatMessage[]
 	players?: Player[]
 	onSendMessage?: (text: string) => void
-	onAccusePlayer?: (playerId: string, gameRoomId: string) => void
-	activeChannelId?: string
 }
 
 export function Chat({
-	isGameMode = true,
 	padForMenu = false,
 
 	// Props from parent
@@ -50,43 +28,20 @@ export function Chat({
 	messages = [],
 	players = [],
 	onSendMessage,
-	onAccusePlayer,
-	activeChannelId,
 }: ChatProps) {
 	// Local UI state
 	const [playerNotes, setPlayerNotes] = useState<Record<string, string>>({})
-	const [accuseDialogOpen, setAccuseDialogOpen] = useState(false)
-	const [selectedPlayerToAccuse, setSelectedPlayerToAccuse] =
-		useState<string>("")
 	const showPlayers = true
 	const [scrollToBottom, setScrollToBottom] = useState(true)
 	const scrollAreaRef = useRef<HTMLDivElement | null>(null)
 
 	const username = usernameFromHook
-	const currentUserId = currentUserIdFromHook
 
 	const handleSendMessage = (text: string) => {
 		if (onSendMessage) {
 			onSendMessage(text)
 			setScrollToBottom(true) // Auto-scroll when user sends a message
 		}
-	}
-
-	const handleAccuseSubmit = () => {
-		if (
-			selectedPlayerToAccuse &&
-			onAccusePlayer &&
-			activeChannelId &&
-			isGameMode
-		) {
-			onAccusePlayer(selectedPlayerToAccuse, activeChannelId)
-		} else if (isGameMode) {
-			console.warn(
-				"AccusePlayer callback not provided, no player selected, or not in game mode/activeChannelId missing.",
-			)
-		}
-		setAccuseDialogOpen(false)
-		setSelectedPlayerToAccuse("") // Reset after submission
 	}
 
 	// Detect when user scrolls up to disable auto-scroll
@@ -172,18 +127,11 @@ export function Chat({
 						username={username}
 						isConnected={isConnected}
 						players={players || []}
-						onAccuseClick={
-							isGameMode && onAccusePlayer
-								? () => setAccuseDialogOpen(true)
-								: undefined
-						}
-						showAccuseButton={isGameMode && !!onAccusePlayer}
 						scrollAreaRef={scrollAreaRef}
 						onScroll={handleScroll}
 						getPlayerForMessage={getPlayerForMessage}
 						disabled={!isConnected}
 						padForMenu={padForMenu}
-						isGameMode={isGameMode}
 					>
 						<ChatInputBox
 							onSendMessage={handleSendMessage}
@@ -204,57 +152,6 @@ export function Chat({
 					</div>
 				)}
 			</div>
-
-			{/* Accusation Dialog (only in game mode and if callback exists) */}
-			{isGameMode && onAccusePlayer && (
-				<Dialog open={accuseDialogOpen} onOpenChange={setAccuseDialogOpen}>
-					<DialogContent className="sm:max-w-[425px]">
-						<DialogHeader>
-							<DialogTitle>Accuse Player</DialogTitle>
-							<DialogDescription>
-								Select a player you believe is an AI. If you are wrong, you
-								might be penalized!
-							</DialogDescription>
-						</DialogHeader>
-						<div className="grid gap-4 py-4">
-							<Label htmlFor="player">Player to Accuse</Label>
-							<Select
-								onValueChange={setSelectedPlayerToAccuse}
-								value={selectedPlayerToAccuse}
-							>
-								<SelectTrigger id="player">
-									<SelectValue placeholder="Select a player" />
-								</SelectTrigger>
-								<SelectContent>
-									{players
-										.filter(player => player.id !== currentUserId)
-										.map(player => (
-											<SelectItem key={player.id} value={player.id}>
-												{player.name}
-											</SelectItem>
-										))}
-								</SelectContent>
-							</Select>
-						</div>
-						<DialogFooter>
-							<Button
-								type="button"
-								variant="outline"
-								onClick={() => setAccuseDialogOpen(false)}
-							>
-								Cancel
-							</Button>
-							<Button
-								onClick={handleAccuseSubmit}
-								variant="destructive"
-								disabled={!selectedPlayerToAccuse}
-							>
-								Accuse
-							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
-			)}
 		</div>
 	)
 }
