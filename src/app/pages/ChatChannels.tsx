@@ -1,5 +1,5 @@
-import { ChevronLeft, Menu } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { ChevronLeft, Menu, MessageSquare, Hash } from "lucide-react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { Chat } from "@/app/pages/Chat"
 import { Button } from "@/components/ui/button"
@@ -31,11 +31,35 @@ export function ChatChannels() {
 		},
 	})
 
+	// Track DM channels separately
+	const dmChannels = useMemo(() => {
+		const dms: { id: string; displayName: string }[] = []
+		if (subscribedChannels) {
+			subscribedChannels.forEach(channel => {
+				if (channel.startsWith("dm_")) {
+					// Extract the other user's name from dm_user1_user2 format
+					const parts = channel.substring(3).split("_")
+					const otherUser = parts.find(
+						p => p.toLowerCase() !== username?.toLowerCase(),
+					)
+					dms.push({
+						id: channel,
+						displayName: otherUser || parts.join(" & "),
+					})
+				}
+			})
+		}
+		return dms
+	}, [subscribedChannels, username])
+
 	const availableChannels = useMemo(() => {
 		const joinedChannels = new Set<string>()
 
 		if (subscribedChannels) {
 			subscribedChannels.forEach(channel => {
+				// Skip DM channels - they're shown separately
+				if (channel.startsWith("dm_")) return
+
 				const normalizedChannel = channel.startsWith("chat_")
 					? channel.substring(5)
 					: channel
@@ -50,9 +74,15 @@ export function ChatChannels() {
 
 	useEffect(() => {
 		if (isConnected && selectedChannel) {
-			const channelId = selectedChannel.startsWith("chat_")
-				? selectedChannel
-				: `chat_${selectedChannel}`
+			// Determine the full channel ID
+			let channelId: string
+			if (selectedChannel.startsWith("dm_")) {
+				channelId = selectedChannel
+			} else if (selectedChannel.startsWith("chat_")) {
+				channelId = selectedChannel
+			} else {
+				channelId = `chat_${selectedChannel}`
+			}
 			subscribeToChannel(channelId)
 		}
 	}, [isConnected, selectedChannel, subscribeToChannel])
@@ -64,11 +94,15 @@ export function ChatChannels() {
 			const { channelId, isInitialJoin } = event.detail
 
 			if (isInitialJoin) {
-				const cleanChannelName = channelId.startsWith("chat_")
-					? channelId.substring(5)
-					: channelId
-
-				setSelectedChannel(cleanChannelName)
+				// For DMs, keep the full channel ID; for chat, extract the name
+				if (channelId.startsWith("dm_")) {
+					setSelectedChannel(channelId)
+				} else {
+					const cleanChannelName = channelId.startsWith("chat_")
+						? channelId.substring(5)
+						: channelId
+					setSelectedChannel(cleanChannelName)
+				}
 			}
 		}
 
@@ -101,31 +135,96 @@ export function ChatChannels() {
 		setSelectedChannel(channel)
 
 		if (isConnected) {
-			const channelId = channel.startsWith("chat_")
-				? channel
-				: `chat_${channel}`
+			let channelId: string
+			if (channel.startsWith("dm_")) {
+				channelId = channel
+			} else if (channel.startsWith("chat_")) {
+				channelId = channel
+			} else {
+				channelId = `chat_${channel}`
+			}
 			subscribeToChannel(channelId)
 		}
 	}
 
 	const getChannelId = (channelName: string) => {
+		if (channelName.startsWith("dm_")) return channelName
 		return channelName.startsWith("chat_") ? channelName : `chat_${channelName}`
 	}
 
+	// Start a DM with another user/bot
+	const handleStartDM = useCallback(
+		(_playerId: string, playerName: string) => {
+			if (!username || !isConnected) return
+
+			// Create a consistent DM channel ID by sorting names alphabetically
+			const names = [username, playerName].sort()
+			const dmChannelId = `dm_${names[0]}_${names[1]}`
+
+			console.log(`Starting DM with ${playerName}, channel: ${dmChannelId}`)
+
+			// Subscribe to the DM channel
+			subscribeToChannel(dmChannelId)
+
+			// Select the DM channel
+			setSelectedChannel(dmChannelId)
+		},
+		[username, isConnected, subscribeToChannel],
+	)
+
+	// Handle nickname change via /nick command
+	const handleEditNickname = useCallback(
+		(newNickname: string) => {
+			if (!isConnected) return
+
+			// Send a /nick command to the server
+			const currentChannelId = getChannelId(selectedChannel)
+			sendMessage(currentChannelId, `/nick ${newNickname}`)
+		},
+		[isConnected, selectedChannel, sendMessage],
+	)
+
 	const ChannelSelect = (
-		<div className="flex flex-col gap-2 p-4">
+		<div className="flex flex-col gap-1 p-4">
+			{/* Channels section */}
+			<div className="text-xs font-medium text-muted-foreground mb-1">
+				Channels
+			</div>
 			{availableChannels.map(channel => (
 				<Button
 					key={channel}
 					variant={selectedChannel === channel ? "default" : "ghost"}
-					className="justify-start"
+					className="justify-start h-8"
 					onClick={() => {
 						handleChannelSelect(channel)
 					}}
 				>
-					#{channel}
+					<Hash className="size-4 mr-1" />
+					{channel}
 				</Button>
 			))}
+
+			{/* DMs section */}
+			{dmChannels.length > 0 && (
+				<>
+					<div className="text-xs font-medium text-muted-foreground mt-3 mb-1">
+						Direct Messages
+					</div>
+					{dmChannels.map(dm => (
+						<Button
+							key={dm.id}
+							variant={selectedChannel === dm.id ? "default" : "ghost"}
+							className="justify-start h-8"
+							onClick={() => {
+								handleChannelSelect(dm.id)
+							}}
+						>
+							<MessageSquare className="size-4 mr-1" />
+							{dm.displayName}
+						</Button>
+					))}
+				</>
+			)}
 		</div>
 	)
 
@@ -161,6 +260,8 @@ export function ChatChannels() {
 						}
 						usernameFromHook={username || ""}
 						isConnected={isConnected}
+						onStartDM={handleStartDM}
+						onEditNickname={handleEditNickname}
 					/>
 				</div>
 			</div>
@@ -197,6 +298,8 @@ export function ChatChannels() {
 				}
 				usernameFromHook={username || ""}
 				isConnected={isConnected}
+				onStartDM={handleStartDM}
+				onEditNickname={handleEditNickname}
 			/>
 		</>
 	)

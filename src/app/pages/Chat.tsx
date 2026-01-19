@@ -12,10 +12,11 @@ interface ChatProps {
 	// Props passed from parent (e.g., ChatChannels)
 	isConnected?: boolean
 	usernameFromHook?: string
-	currentUserIdFromHook?: string | null
 	messages?: DisplayChatMessage[]
 	players?: Player[]
 	onSendMessage?: (text: string) => void
+	onStartDM?: (playerId: string, playerName: string) => void
+	onEditNickname?: (newNickname: string) => void
 }
 
 export function Chat({
@@ -24,10 +25,11 @@ export function Chat({
 	// Props from parent
 	isConnected = false,
 	usernameFromHook = "",
-	currentUserIdFromHook = null,
 	messages = [],
 	players = [],
 	onSendMessage,
+	onStartDM,
+	onEditNickname,
 }: ChatProps) {
 	// Local UI state
 	const [playerNotes, setPlayerNotes] = useState<Record<string, string>>({})
@@ -148,6 +150,9 @@ export function Chat({
 							playerNotes={playerNotes}
 							onNoteChange={handlePlayerNoteChange}
 							disabled={!isConnected}
+							onStartDM={onStartDM}
+							onEditNickname={onEditNickname}
+							currentUsername={username}
 						/>
 					</div>
 				)}

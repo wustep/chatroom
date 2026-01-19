@@ -18,7 +18,7 @@ import {
 	playerToPublic,
 	removePlayerFromRoom,
 } from "@/server/core/players"
-import { getRoom, getRoomMode } from "@/server/core/rooms"
+import { getRoom } from "@/server/core/rooms"
 import { getSocketIo, rooms } from "@/server/core/state"
 import { Player, PlaygroundRoom, Room } from "@/server/types"
 import { debugLog } from "@/server/utils/logger"
@@ -224,7 +224,6 @@ function processMessage(
 			if (!respondingAI) {
 				return
 			}
-			const mode = getRoomMode(playerRoomId)
 			const chatService = ChatService.getInstance()
 			const recentMessages = getRecentMessages(playerRoomId)
 
@@ -236,7 +235,6 @@ function processMessage(
 					const aiMessageText = await chatService.generateResponseWithContext(
 						senderName, // The sender of the trigger message
 						recentMessages, // History
-						mode,
 						undefined,
 						playgroundRoom.settings, // Playground-specific settings
 					)
@@ -669,6 +667,66 @@ function handleChatCommand(
 			})
 
 			sendSystemMessage(socket, `Bio updated: "${bioText}"`)
+			break
+		}
+
+		case "/nick": {
+			// Format: /nick NewNickname
+			const newNick = commandText.slice(6).trim()
+
+			if (newNick.length === 0) {
+				sendSystemMessage(socket, "Usage: /nick NewNickname")
+				return
+			}
+
+			if (newNick.length > 30) {
+				sendSystemMessage(socket, "Nickname must be 30 characters or less")
+				return
+			}
+
+			// Check if the new nickname is already taken
+			const oldName = player.name
+			const newNameLower = newNick.toLowerCase()
+
+			// Check all rooms for existing players with that name
+			let nameTaken = false
+			rooms.forEach(room => {
+				for (const p of room.players.values()) {
+					if (
+						p.name.toLowerCase() === newNameLower &&
+						p.id !== socket.id
+					) {
+						nameTaken = true
+					}
+				}
+			})
+
+			if (nameTaken) {
+				sendSystemMessage(socket, `Nickname "${newNick}" is already in use`)
+				return
+			}
+
+			// Update the player's name in all rooms they're in
+			rooms.forEach((room, roomId) => {
+				const playerInRoom = room.players.get(socket.id)
+				if (playerInRoom) {
+					playerInRoom.name = newNick
+
+					// Broadcast name change to all clients in the room
+					io.to(roomId).emit(ServerEvents.PLAYER_LIST_UPDATE, {
+						players: Array.from(room.players.values()).map(p =>
+							playerToPublic(p, roomId),
+						),
+						roomId,
+					})
+				}
+			})
+
+			// Store the new username in localStorage on the client
+			sendSystemMessage(
+				socket,
+				`Nickname changed from "${oldName}" to "${newNick}"`,
+			)
 			break
 		}
 

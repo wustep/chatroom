@@ -4,19 +4,25 @@
  */
 import { Server, Socket } from "socket.io"
 
+import { getPersonaByName } from "@/lib/personas"
 import {
 	addAiPlayerToRoom,
 	addRealPlayerToRoom,
 	playerToPublic,
 } from "@/server/core/players"
-import { getRoom, initializeRoom, isGameRoom } from "@/server/core/rooms"
+import {
+	getDMParticipants,
+	getRoom,
+	initializeRoom,
+	isDMRoom,
+} from "@/server/core/rooms"
 import { activeUsernames, rooms } from "@/server/core/state"
 import type { ChatMessage, Player, PublicPlayer } from "@/server/types"
 import { debugLog } from "@/server/utils/logger"
 import { ServerEvents } from "@/shared/events"
 // Consolidated import for Player and PublicPlayer
 
-// Define the payload for JOINED_ROOM, extending base if necessary or defining fully.
+// Define the payload for JOINED_ROOM
 interface JoinedRoomServerPayload {
 	userId: string
 	username: string
@@ -25,7 +31,6 @@ interface JoinedRoomServerPayload {
 	history: ChatMessage[]
 	isReconnection?: boolean
 	isDebounced?: boolean
-	assignedGameName?: string
 }
 
 // Our new custom events
@@ -98,9 +103,6 @@ export function setupChannelHandlers(io: Server, socket: Socket): void {
 								isReconnection: true,
 								isDebounced: true,
 							}
-							if (isGameRoom(roomId) && player.anonymizedName) {
-								joinedRoomPayload.assignedGameName = player.anonymizedName
-							}
 							socket.emit(ServerEvents.JOINED_ROOM, joinedRoomPayload)
 						}
 					}
@@ -117,7 +119,24 @@ export function setupChannelHandlers(io: Server, socket: Socket): void {
 
 				// If the room was just created, populate it with some AI players
 				if (isNewRoom) {
-					initializeRoom(roomId, addAiPlayerToRoom)
+					// For DM rooms, check if one of the participants is an AI persona
+					if (isDMRoom(roomId)) {
+						const participants = getDMParticipants(roomId)
+						for (const participantName of participants) {
+							// Check if this participant is a known AI persona
+							const persona = getPersonaByName(participantName)
+							if (persona) {
+								debugLog(
+									"DM_ADD_AI",
+									`Adding AI persona ${participantName} to DM room ${roomId}`,
+								)
+								addAiPlayerToRoom(roomId, participantName)
+							}
+						}
+					} else {
+						// Regular room - use normal initialization
+						initializeRoom(roomId, addAiPlayerToRoom)
+					}
 				}
 
 				room.lastHumanActivity = Date.now()
@@ -144,33 +163,14 @@ export function setupChannelHandlers(io: Server, socket: Socket): void {
 							playerToPublic(p as Player, roomId),
 						)
 
-						// Prepare message history, anonymizing if necessary
-						let processedHistory = room.messages || []
-						if (isGameRoom(roomId)) {
-							processedHistory = processedHistory.map(msg => {
-								const msgSenderPlayer = room.players.get(msg.senderId)
-								return {
-									...msg,
-									sender:
-										msgSenderPlayer?.anonymizedName && msg.type !== "system"
-											? msgSenderPlayer.anonymizedName
-											: msg.sender,
-								}
-							})
-						}
-
 						const joinedRoomPayload: JoinedRoomServerPayload = {
 							userId: existingPlayerInRoomData.id,
 							username: existingPlayerInRoomData.name,
 							players: playerDTOs,
 							roomId: roomId,
-							history: processedHistory,
+							history: room.messages || [],
 							isReconnection: true,
 							isDebounced: true,
-						}
-						if (isGameRoom(roomId) && existingPlayerInRoomData.anonymizedName) {
-							joinedRoomPayload.assignedGameName =
-								existingPlayerInRoomData.anonymizedName
 						}
 						socket.emit(ServerEvents.JOINED_ROOM, joinedRoomPayload)
 					}
@@ -260,32 +260,14 @@ export function setupChannelHandlers(io: Server, socket: Socket): void {
 					playerToPublic(p as Player, roomId),
 				)
 
-				// Prepare message history, anonymizing if necessary
-				let finalProcessedHistory = room.messages || []
-				if (isGameRoom(roomId)) {
-					finalProcessedHistory = finalProcessedHistory.map(msg => {
-						const msgSenderPlayer = room.players.get(msg.senderId)
-						return {
-							...msg,
-							sender:
-								msgSenderPlayer?.anonymizedName && msg.type !== "system"
-									? msgSenderPlayer.anonymizedName
-									: msg.sender,
-						}
-					})
-				}
-
 				// Send join confirmation to the client
 				const joinedRoomPayload: JoinedRoomServerPayload = {
 					userId: player.id,
 					username: player.name,
 					players: playerDTOs,
 					roomId: roomId,
-					history: finalProcessedHistory,
+					history: room.messages || [],
 					isReconnection: false,
-				}
-				if (isGameRoom(roomId) && player.anonymizedName) {
-					joinedRoomPayload.assignedGameName = player.anonymizedName
 				}
 				socket.emit(ServerEvents.JOINED_ROOM, joinedRoomPayload)
 

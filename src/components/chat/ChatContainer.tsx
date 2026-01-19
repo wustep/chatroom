@@ -37,7 +37,7 @@ interface ChatContainerProps {
 export function ChatContainer({
 	messages,
 	username,
-	isConnected,
+	isConnected: _isConnected,
 	players,
 	scrollAreaRef,
 	onScroll,

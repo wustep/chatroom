@@ -4,7 +4,13 @@
 import { ChatService } from "@/server/ai/ChatService"
 import * as config from "@/server/config/config"
 import { getRecentMessages } from "@/server/core/messages"
-import { getRoom, isChatRoom, isPlaygroundRoom } from "@/server/core/rooms"
+import {
+	getDMParticipants,
+	getRoom,
+	isChatRoom,
+	isDMRoom,
+	isPlaygroundRoom,
+} from "@/server/core/rooms"
 import { getSocketIo, rooms } from "@/server/core/state"
 import { Player, Room } from "@/server/types"
 
@@ -38,15 +44,31 @@ export async function generateAiResponse(
 	const aiInRoom = Array.from(room.players.values()).filter(p => p.isAI)
 
 	if (aiInRoom.length > 0) {
-		// Select a random AI to respond
+		// Select a random AI to respond (or the only one in a DM)
 		const respondingAI = aiInRoom[Math.floor(Math.random() * aiInRoom.length)]
 		const chatService = ChatService.getInstance()
 
 		// Get recent conversation history for context and add topic context
 		const recentMessages = [...getRecentMessages(roomId)]
 
+		// Add context based on room type
+		if (isDMRoom(roomId)) {
+			// For DMs, add context about it being a private conversation
+			const participants = getDMParticipants(roomId)
+			const otherParticipant = participants.find(
+				p => p.toLowerCase() !== respondingAI.name.toLowerCase(),
+			)
+			recentMessages.unshift({
+				id: Date.now() - 1,
+				sender: "System",
+				senderId: "system",
+				text: `This is a private direct message conversation with ${otherParticipant || "a user"}. Respond naturally and personally. Be engaging and conversational. You can be more casual and direct since this is a one-on-one chat.`,
+				type: "system",
+				timestamp: Date.now() - 1,
+			})
+		}
 		// Check for explicit room topic first
-		if (room.topic) {
+		else if (room.topic) {
 			recentMessages.unshift({
 				id: Date.now() - 1,
 				sender: "System",

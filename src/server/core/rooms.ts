@@ -235,3 +235,16 @@ export function isPlaygroundRoom(roomId: string): boolean {
 export function isChatRoom(roomId: string): boolean {
 	return roomId.startsWith("chat_") || roomId.startsWith("playground_chat_")
 }
+
+export function isDMRoom(roomId: string): boolean {
+	return roomId.startsWith("dm_")
+}
+
+/**
+ * Extract participant names from a DM room ID
+ * DM room IDs are formatted as dm_user1_user2
+ */
+export function getDMParticipants(roomId: string): string[] {
+	if (!isDMRoom(roomId)) return []
+	return roomId.substring(3).split("_")
+}
