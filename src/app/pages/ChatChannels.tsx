@@ -9,12 +9,13 @@ interface ChatChannelsProps {
 	handleReturnToSplash: () => void
 }
 
-const DEFAULT_CHANNELS = ["general", "gaming", "music", "philosophy"]
+const DEFAULT_CHANNELS = ["general", "tech", "philosophy"]
 
 export function ChatChannels({ handleReturnToSplash }: ChatChannelsProps) {
 	const [selectedChannel, setSelectedChannel] = useState<string>("general")
 	const [pinned, setPinned] = useState(() => {
-		return localStorage.getItem("chatroom_sidebar_pinned") === "true"
+		const stored = localStorage.getItem("chatroom_sidebar_pinned")
+		return stored === null ? true : stored === "true"
 	})
 
 	const {

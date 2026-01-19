@@ -628,6 +628,50 @@ function handleChatCommand(
 			break
 		}
 
+		case "/bio": {
+			// Format: /bio Your bio text here
+			// Get bio text (everything after /bio)
+			const bioText = commandText.slice(5).trim()
+
+			if (bioText.length === 0) {
+				sendSystemMessage(socket, "Usage: /bio Your bio text here")
+				return
+			}
+
+			if (bioText.length > 200) {
+				sendSystemMessage(socket, "Bio must be 200 characters or less")
+				return
+			}
+
+			// Update the player's bio in all rooms they're in
+			rooms.forEach((room, roomId) => {
+				const playerInRoom = room.players.get(socket.id)
+				if (playerInRoom) {
+					playerInRoom.bio = bioText
+
+					// Broadcast bio update to all clients in the room
+					io.to(roomId).emit(ServerEvents.BIO_UPDATE, {
+						playerId: player.id,
+						name: player.name,
+						bio: bioText,
+						roomId,
+					})
+
+					// Also send updated player list
+					const allPlayers = Array.from(room.players.values()).map(p =>
+						playerToPublic(p, roomId),
+					)
+					io.to(roomId).emit(ServerEvents.PLAYER_LIST_UPDATE, {
+						players: allPlayers,
+						roomId,
+					})
+				}
+			})
+
+			sendSystemMessage(socket, `Bio updated: "${bioText}"`)
+			break
+		}
+
 		default:
 			// Silently ignore unknown commands
 			break

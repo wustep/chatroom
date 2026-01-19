@@ -15,6 +15,7 @@ interface Player {
 	isCurrentUser?: boolean
 	colorKey: string
 	isAI?: boolean
+	bio?: string
 	persona?: {
 		profile: string
 		personality?: {
@@ -76,27 +77,40 @@ export function PlayersContainer({
 												showAIIndicator={isPlayground || showAIIndicators}
 											/>
 										</PopoverTrigger>
-										{/* Popover content remains the same */}
-										<PopoverContent className="w-56 p-3">
-											<div className="grid gap-2">
-												<div className="flex items-center justify-between">
+										{/* Popover content with bio and notes */}
+										<PopoverContent className="w-64 p-3">
+											<div className="grid gap-3">
+												<div className="font-medium text-sm">
+													{player.name}
+												</div>
+												{player.bio && (
+													<div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
+														{player.bio}
+													</div>
+												)}
+												{!player.bio && !player.isAI && (
+													<div className="text-xs text-muted-foreground italic">
+														No bio set. Use /bio to set one.
+													</div>
+												)}
+												<div className="border-t pt-2">
 													<Label
 														htmlFor={`notes-${player.id}`}
 														className="text-xs font-medium"
 													>
-														Notes on {player.name}
+														Your notes
 													</Label>
+													<Textarea
+														id={`notes-${player.id}`}
+														placeholder={`Private notes on ${player.name}...`}
+														value={playerNotes[player.name] || ""}
+														onChange={e =>
+															onNoteChange(player.name, e.target.value)
+														}
+														className="h-20 text-sm resize-none mt-1"
+														disabled={disabled}
+													/>
 												</div>
-												<Textarea
-													id={`notes-${player.id}`}
-													placeholder={`What are your thoughts on ${player.name}?`}
-													value={playerNotes[player.name] || ""}
-													onChange={e =>
-														onNoteChange(player.name, e.target.value)
-													}
-													className="h-24 text-sm resize-none"
-													disabled={disabled}
-												/>
 											</div>
 										</PopoverContent>
 									</Popover>

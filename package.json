@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"npm run app\" \"npm run server\"",
+		"dev": "concurrently -n app,server -c blue,green \"npm run app\" \"npm run server\"",
 		"build": "tsc -b && npm run build:app && npm run build:server",
 		"lint": "eslint .",
 		"app": "env-cmd -f .env sh -c 'vite --port $APP_PORT --config vite.app.config.ts --open'",

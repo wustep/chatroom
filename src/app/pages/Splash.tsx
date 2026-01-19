@@ -144,7 +144,13 @@ export function Splash({ onJoinChat }: SplashProps) {
 			/>
 			<h1 className="text-4xl font-bold">Chatroom</h1>
 
-			<div className="w-full space-y-5">
+			<form
+				className="w-full space-y-5"
+				onSubmit={e => {
+					e.preventDefault()
+					handleJoinChat()
+				}}
+			>
 				<div className="space-y-2 text-left">
 					<Label htmlFor="username" className="text-sm font-medium">
 						Username
@@ -170,14 +176,13 @@ export function Splash({ onJoinChat }: SplashProps) {
 					<Button
 						className="w-full"
 						size="lg"
-						onClick={handleJoinChat}
 						disabled={buttonsActuallyDisabled}
-						type="button"
+						type="submit"
 					>
 						{showButtonSpinner ? (
 							<Loader2 className="h-5 w-5 animate-spin" />
 						) : (
-							"Join Chat"
+							"Join"
 						)}
 					</Button>
 
@@ -193,7 +198,7 @@ export function Splash({ onJoinChat }: SplashProps) {
 						</Alert>
 					)}
 				</div>
-			</div>
+			</form>
 		</div>
 	)
 }

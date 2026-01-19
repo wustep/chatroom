@@ -22,6 +22,7 @@ export function playerToPublic(player: Player, roomId: string): PublicPlayer {
 	const publicPlayer: PublicPlayer = {
 		id: player.id,
 		name: player.name,
+		bio: player.bio,
 	}
 
 	// Include isAI flag and persona details only in playground mode

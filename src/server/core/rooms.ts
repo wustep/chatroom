@@ -2,6 +2,7 @@
  * Room management functionality
  */
 import * as config from "@/server/config/config"
+import roomsConfig from "@/server/config/rooms.json"
 import { getSocketIo, rooms } from "@/server/core/state"
 import { ChatMessage, Room } from "@/server/types"
 import { debugLog } from "@/server/utils/logger"
@@ -23,19 +24,44 @@ export function getRoom(roomId: string): Room {
 }
 
 /**
- * Initialize a new room with AI players
+ * Get the room config from rooms.json
+ */
+export function getRoomConfig(roomId: string) {
+	return roomsConfig.defaultRooms.find(r => r.id === roomId)
+}
+
+/**
+ * Get the configured personas for a room from rooms.json
+ */
+export function getConfiguredPersonas(roomId: string): string[] {
+	const roomConfig = getRoomConfig(roomId)
+	return roomConfig?.personas || []
+}
+
+/**
+ * Initialize a new room with AI players from config
  */
 export function initializeRoom(
 	roomId: string,
-	addAiPlayerFn: (roomId: string) => void,
+	addAiPlayerFn: (roomId: string, personaName?: string) => void,
 ): void {
 	// Just use getRoom to ensure the room exists
-	getRoom(roomId)
+	const room = getRoom(roomId)
 
-	// Immediately populate with 3-5 AI players when a room is created
-	const initialAiCount = Math.floor(Math.random() * 3) + 3 // 3-5 AI players
-	for (let i = 0; i < initialAiCount; i++) {
-		addAiPlayerFn(roomId)
+	// Get room config for topic
+	const roomConfig = getRoomConfig(roomId)
+	if (roomConfig?.topic) {
+		room.topic = roomConfig.topic
+	}
+
+	// Get configured personas for this room
+	const configuredPersonas = getConfiguredPersonas(roomId)
+
+	if (configuredPersonas.length > 0) {
+		// Add specific personas from config
+		for (const personaName of configuredPersonas) {
+			addAiPlayerFn(roomId, personaName)
+		}
 	}
 
 	// Schedule system prompts for the new room
@@ -124,13 +150,9 @@ export function checkRoomInactivity(): void {
 	debugLog("INACTIVITY_CHECK", `Checking ${rooms.size} rooms for inactivity...`)
 
 	rooms.forEach((room, roomId) => {
-		// Skip inactivity checks for playground rooms and main chat rooms
-		if (
-			isPlaygroundRoom(roomId) ||
-			["chat_gaming", "chat_general", "chat_music", "chat_philosophy"].includes(
-				roomId,
-			)
-		) {
+		// Skip inactivity checks for playground rooms and configured default rooms
+		const defaultRoomIds = roomsConfig.defaultRooms.map(r => r.id)
+		if (isPlaygroundRoom(roomId) || defaultRoomIds.includes(roomId)) {
 			return // Go to the next room
 		}
 

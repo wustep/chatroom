@@ -44,6 +44,9 @@ export const ServerEvents = {
 
 	// Channel events
 	CHANNEL_JOIN_COMMAND: "CHANNEL_JOIN_COMMAND",
+
+	// Bio events
+	BIO_UPDATE: "bioUpdate",
 } as const
 
 // Inter-server events
@@ -175,6 +178,20 @@ export interface ServerToClientEvents {
 	[ServerEvents.CHANNEL_JOIN_COMMAND]: (data: {
 		channelId: string
 		channelName: string
+	}) => void
+
+	/**
+	 * Event sent when a player's bio is updated
+	 * @param data.odplayerId The ID of the player whose bio was updated
+	 * @param data.name The name of the player
+	 * @param data.bio The new bio text
+	 * @param data.roomId The room where the update occurred
+	 */
+	[ServerEvents.BIO_UPDATE]: (data: {
+		playerId: string
+		name: string
+		bio: string
+		roomId: string
 	}) => void
 }
 

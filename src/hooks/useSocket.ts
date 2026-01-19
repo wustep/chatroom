@@ -11,6 +11,7 @@ export interface Player {
 	isCurrentUser?: boolean
 	colorKey: string
 	timestamp?: number
+	bio?: string
 }
 
 export interface ServerChatMessage {
@@ -373,6 +374,26 @@ export const useSocket = ({ onRoomClosed, onDisconnected }: UseSocketProps) => {
 			window.dispatchEvent(event)
 		}
 
+		const handleBioUpdate = (data: {
+			playerId: string
+			name: string
+			bio: string
+			roomId: string
+		}) => {
+			console.log(
+				`[SOCKET] Bio update for ${data.name} in ${data.roomId}: "${data.bio}"`,
+			)
+			setPlayersByChannel(prev => {
+				const currentPlayers = prev[data.roomId] || []
+				return {
+					...prev,
+					[data.roomId]: currentPlayers.map(p =>
+						p.id === data.playerId ? { ...p, bio: data.bio } : p,
+					),
+				}
+			})
+		}
+
 		socket.on(ServerEvents.JOINED_ROOM, handleJoinedRoom)
 		socket.on(ServerEvents.NEW_MESSAGE, handleNewMessage)
 		socket.on(ServerEvents.PLAYER_JOINED, handlePlayerJoined)
@@ -381,6 +402,7 @@ export const useSocket = ({ onRoomClosed, onDisconnected }: UseSocketProps) => {
 		socket.on(ServerEvents.ROOM_CLOSED, handleRoomClosed)
 		socket.on(ServerEvents.ERROR, handleError)
 		socket.on(ServerEvents.CHANNEL_JOIN_COMMAND, handleChannelJoinCommand)
+		socket.on(ServerEvents.BIO_UPDATE, handleBioUpdate)
 
 		return () => {
 			console.log("Cleaning up per-channel event listeners...")
@@ -392,6 +414,7 @@ export const useSocket = ({ onRoomClosed, onDisconnected }: UseSocketProps) => {
 			socket.off(ServerEvents.ROOM_CLOSED, handleRoomClosed)
 			socket.off(ServerEvents.ERROR, handleError)
 			socket.off(ServerEvents.CHANNEL_JOIN_COMMAND, handleChannelJoinCommand)
+			socket.off(ServerEvents.BIO_UPDATE, handleBioUpdate)
 		}
 	}, [isConnected, currentUserId, username, onRoomClosed])
 

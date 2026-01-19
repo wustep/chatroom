@@ -1,0 +1,22 @@
+{
+  "defaultRooms": [
+    {
+      "id": "chat_general",
+      "name": "general",
+      "topic": "Casual conversation about anything and everything",
+      "personas": ["maya", "ethan", "olivia", "marcus", "emma"]
+    },
+    {
+      "id": "chat_tech",
+      "name": "tech",
+      "topic": "Startups, programming, AI, and building products",
+      "personas": ["paulg", "steve", "alex", "ryo"]
+    },
+    {
+      "id": "chat_philosophy",
+      "name": "philosophy",
+      "topic": "Deep discussions on life, ethics, existence, and ideas",
+      "personas": ["philosopher", "academic", "student"]
+    }
+  ]
+}

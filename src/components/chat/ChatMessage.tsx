@@ -2,6 +2,11 @@ import { format, isToday, isYesterday } from "date-fns"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
 	getAvatarClass,
 	getBorderClass,
 	getMircNicknameColor,
@@ -17,6 +22,7 @@ interface Player {
 	isCurrentUser?: boolean
 	colorKey: string
 	isAI?: boolean
+	bio?: string
 }
 
 interface ChatMessageProps {
@@ -75,10 +81,19 @@ export function ChatMessage({
 		return (
 			<div className="flex flex-row gap-2 overflow-hidden">
 				<span className="shrink-0">[{timeString}]</span>
-				<span
-					className="shrink-0"
-					style={{ color: nicknameColor }}
-				>{`<${message.sender}>`}</span>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<span
+							className="shrink-0 cursor-pointer hover:underline"
+							style={{ color: nicknameColor }}
+						>{`<${message.sender}>`}</span>
+					</TooltipTrigger>
+					{player.bio && (
+						<TooltipContent side="top" className="max-w-[200px]">
+							<p className="text-sm">{player.bio}</p>
+						</TooltipContent>
+					)}
+				</Tooltip>
 				<span className="break-words wrap-anywhere overflow-hidden">
 					{processMentions(message.text, players)}
 				</span>
@@ -112,9 +127,23 @@ export function ChatMessage({
 				)}
 			>
 				{!isSelf && (
-					<p className={cn("text-xs font-medium mb-1", textClass)}>
-						{message.sender}
-					</p>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<p
+								className={cn(
+									"text-xs font-medium mb-1 cursor-pointer hover:underline w-fit",
+									textClass,
+								)}
+							>
+								{message.sender}
+							</p>
+						</TooltipTrigger>
+						{player.bio && (
+							<TooltipContent side="top" className="max-w-[200px]">
+								<p className="text-sm">{player.bio}</p>
+							</TooltipContent>
+						)}
+					</Tooltip>
 				)}
 				<p className="text-sm break-words wrap-anywhere whitespace-pre-wrap overflow-hidden">
 					{processMentions(message.text, players)}
