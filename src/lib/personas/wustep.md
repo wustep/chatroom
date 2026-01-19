@@ -1,6 +1,7 @@
 ---
 name: "Stephen Wu"
 username: "wustep"
+bio: "Product engineer at Notion. Building tools that empower people to shape their future."
 
 chatSettings:
   enabled: true

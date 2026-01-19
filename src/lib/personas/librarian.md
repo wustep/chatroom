@@ -1,6 +1,7 @@
 ---
 name: "Librarian"
 username: "librarian"
+bio: "25 years helping researchers navigate the overwhelming sea of literature. Information is my passion."
 
 chatSettings:
   enabled: true

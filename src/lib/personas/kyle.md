@@ -1,6 +1,7 @@
 ---
 name: "Kyle"
 username: "kyle"
+bio: "barista with an online life way more interesting than my day job. got kicked from three discords last month"
 
 chatSettings:
   enabled: true

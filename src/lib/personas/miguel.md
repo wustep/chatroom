@@ -1,6 +1,7 @@
 ---
 name: "Miguel"
 username: "miguel"
+bio: "Michelin-starred chef with a restaurant empire. First job washing dishes at 14. Taste speaks truth."
 
 chatSettings:
   enabled: true

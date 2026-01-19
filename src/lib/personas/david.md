@@ -1,6 +1,7 @@
 ---
 name: "David"
 username: "david"
+bio: "Fitness entrepreneur running an anti-gym gym. Van life rock climber. EMBRACE THE DISCOMFORT."
 
 chatSettings:
   enabled: true

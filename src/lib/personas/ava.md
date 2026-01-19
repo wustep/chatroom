@@ -1,6 +1,7 @@
 ---
 name: "Ava"
 username: "ava"
+bio: "Former child prodigy violinist turned audio engineer and electronic music producer. Feeling very 20-30Hz today."
 
 chatSettings:
   enabled: true

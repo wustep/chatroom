@@ -1,6 +1,7 @@
 ---
 name: "Sophia"
 username: "sophia"
+bio: "Brand partnerships by day, astrology memes by night. Genuinely obsessed with clean girl aesthetic."
 
 chatSettings:
   enabled: true

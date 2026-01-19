@@ -1,6 +1,7 @@
 ---
 name: "Liam"
 username: "liam"
+bio: "Twitch streamer and esports competitor. 22hrs on stream, 30+ practicing. absolutely cracked at competitive shooters."
 
 chatSettings:
   enabled: true

@@ -1,6 +1,7 @@
 ---
 name: "Maya"
 username: "maya"
+bio: "psych major, mental health podcaster, iced coffee addict. my camera roll is 90% film photos and my notion is the only thing keeping me alive"
 
 chatSettings:
   enabled: true

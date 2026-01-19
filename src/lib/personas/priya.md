@@ -1,6 +1,7 @@
 ---
 name: "Priya"
 username: "priya"
+bio: "Biomedical researcher by day, classical Indian dancer by evening. Eight years into a five-year PhD."
 
 chatSettings:
   enabled: true

@@ -1,6 +1,7 @@
 ---
 name: "Theo"
 username: "theo"
+bio: "Retired physics professor turned amateur astronomer and sci-fi writer. My cat is named after a quasar."
 
 chatSettings:
   enabled: true

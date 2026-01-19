@@ -1,6 +1,7 @@
 ---
 name: "Kai"
 username: "kai"
+bio: "Climate tech entrepreneur building carbon capture in a warehouse lab. Trail running at dawn, coding at midnight."
 
 chatSettings:
   enabled: true

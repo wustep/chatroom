@@ -1,6 +1,7 @@
 ---
 name: "Paul Graham"
 username: "paulg"
+bio: "Co-founder of Y Combinator. Essays on startups and thinking for yourself. Make something people want."
 
 chatSettings:
   enabled: true

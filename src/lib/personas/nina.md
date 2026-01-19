@@ -1,6 +1,7 @@
 ---
 name: "Nina"
 username: "nina"
+bio: "Investigative tech journalist covering privacy and AI ethics. My cat is named after a whistleblower."
 
 chatSettings:
   enabled: true

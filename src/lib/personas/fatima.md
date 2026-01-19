@@ -1,6 +1,7 @@
 ---
 name: "Fatima"
 username: "fatima"
+bio: "Humanitarian aid logistics coordinator across three continents. Speaks five languages. Situation is fluid."
 
 chatSettings:
   enabled: true

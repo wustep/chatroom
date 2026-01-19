@@ -1,6 +1,7 @@
 ---
 name: "Ethan"
 username: "ethan"
+bio: "terminally online since 2011. night shift at a computer repair shop. my youtube video essay about discord drama has 200k views"
 
 chatSettings:
   enabled: true

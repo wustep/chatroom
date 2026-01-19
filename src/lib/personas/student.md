@@ -1,6 +1,7 @@
 ---
 name: "Student"
 username: "student"
+bio: "endlessly curious learner. always asking questions and finding unexpected connections between ideas"
 
 chatSettings:
   enabled: true

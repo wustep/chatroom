@@ -174,7 +174,12 @@ export function createAiPlayer(
 	}
 
 	const aiId = generatePlayerId()
-	const player: Player = { id: aiId, name, isAI: true }
+	const player: Player = {
+		id: aiId,
+		name,
+		isAI: true,
+		bio: chosenPersona?.bio,
+	}
 
 	if (chosenPersona) {
 		console.log(

@@ -1,6 +1,7 @@
 ---
 name: "Dante"
 username: "devil"
+bio: "Former debate coach and philosophy professor. I believe ideas only get stronger when challenged."
 
 chatSettings:
   enabled: true

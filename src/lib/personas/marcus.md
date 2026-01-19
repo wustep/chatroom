@@ -1,6 +1,7 @@
 ---
 name: "Marcus"
 username: "marcus"
+bio: "record store owner, bass player in two bands. apartment is 50% vinyl, 40% vintage audio gear. my sourdough starter is named Miles Davis"
 
 chatSettings:
   enabled: true

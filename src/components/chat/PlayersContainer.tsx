@@ -88,7 +88,7 @@ export function PlayersContainer({
 														{player.bio}
 													</div>
 												)}
-												{!player.bio && !player.isAI && (
+												{!player.bio && player.isCurrentUser && (
 													<div className="text-xs text-muted-foreground italic">
 														No bio set. Use /bio to set one.
 													</div>

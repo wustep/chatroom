@@ -1,6 +1,7 @@
 ---
 name: "Leila"
 username: "leila"
+bio: "Penetration tester by day, urban fantasy author by night. My cat is named Backdoor."
 
 chatSettings:
   enabled: true

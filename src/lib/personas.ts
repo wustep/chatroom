@@ -8,6 +8,8 @@ export interface Persona {
 	name: string
 	/** Username to show in chat instead of name. Currently using lowercase version of name. */
 	username: string
+	/** Short bio shown on hover (max 200 chars) */
+	bio: string
 	profile: string
 	personality: {
 		traits: string[]
@@ -158,6 +160,7 @@ function parsePersonaMarkdown(content: string): Persona {
 	return {
 		name: (frontmatter.name as string) || "",
 		username: (frontmatter.username as string) || "",
+		bio: (frontmatter.bio as string) || "",
 		profile: parseProfile(body),
 		personality: {
 			traits: parseListSection(body, "Traits"),

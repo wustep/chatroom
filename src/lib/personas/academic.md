@@ -1,6 +1,7 @@
 ---
 name: "Academic"
 username: "academic"
+bio: "research strategist helping thinkers build stronger arguments. Author of 'Building Your Case' and 'Evidence Matters'"
 
 chatSettings:
   enabled: true

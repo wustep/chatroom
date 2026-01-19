@@ -1,6 +1,7 @@
 ---
 name: "Jason"
 username: "jason"
+bio: "Former Wall Street quant turned fintech founder. Wake up at 4:30 AM. Sleep is suboptimal but necessary."
 
 chatSettings:
   enabled: true

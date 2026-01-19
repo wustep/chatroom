@@ -1,6 +1,7 @@
 ---
 name: "Raj"
 username: "raj"
+bio: "ML researcher specializing in algorithmic bias. Known for devastating takedowns of hype-driven AI claims."
 
 chatSettings:
   enabled: true

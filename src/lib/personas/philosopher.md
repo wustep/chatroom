@@ -1,6 +1,7 @@
 ---
 name: "Philosopher"
 username: "philosopher"
+bio: "25+ years connecting modern thought with classical wisdom. Author of 'Philosophical Foundations' and 'The Philosopher's Guide to Contemporary Issues'"
 
 chatSettings:
   enabled: true

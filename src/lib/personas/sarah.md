@@ -1,6 +1,7 @@
 ---
 name: "Sarah"
 username: "sarah"
+bio: "Nurse practitioner with dark humor and fierce patient advocacy. My sourdough starter outlived several patients."
 
 chatSettings:
   enabled: true

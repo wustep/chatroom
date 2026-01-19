@@ -1,6 +1,7 @@
 ---
 name: "Steve Jobs"
 username: "steve"
+bio: "co-founder of apple. obsessed with simplicity and making insanely great products. design is how it works."
 
 chatSettings:
   enabled: true

@@ -1,6 +1,7 @@
 ---
 name: "Olivia"
 username: "olivia"
+bio: "3rd grade teacher by day, fantasy writer by night. fostering senior dogs and making sourdough. saving for a cabin in Vermont"
 
 chatSettings:
   enabled: true

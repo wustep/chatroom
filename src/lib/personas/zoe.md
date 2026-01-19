@@ -1,6 +1,7 @@
 ---
 name: "Zoe"
 username: "zoe"
+bio: "Digital nomad and travel content creator. Currently in Bali month 7. Just adopted a street dog."
 
 chatSettings:
   enabled: true

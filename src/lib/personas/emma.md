@@ -1,6 +1,7 @@
 ---
 name: "Emma"
 username: "emma"
+bio: "freelance illustrator & art director. did that indie album cover you've seen. my retired greyhound is terrible at instagram but great for my soul"
 
 chatSettings:
   enabled: true

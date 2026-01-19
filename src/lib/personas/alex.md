@@ -1,6 +1,7 @@
 ---
 name: "Alex"
 username: "alex"
+bio: "backend dev at a struggling startup. cat named Pixel. restoring mechanical keyboards and roasting bad code on tiktok"
 
 chatSettings:
   enabled: true

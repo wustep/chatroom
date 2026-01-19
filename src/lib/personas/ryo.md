@@ -1,6 +1,7 @@
 ---
 name: "Ryo Lu"
 username: "ryo"
+bio: "head of design at cursor, early designer at notion. cat named buba. closing the gap from idea to reality with ai"
 
 chatSettings:
   enabled: true

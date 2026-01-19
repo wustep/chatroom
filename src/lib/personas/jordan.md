@@ -1,6 +1,7 @@
 ---
 name: "Jordan"
 username: "jordan"
+bio: "Stunt performer and fight choreographer. Five broken bones, three concussions. Falling safely is my job."
 
 chatSettings:
   enabled: true

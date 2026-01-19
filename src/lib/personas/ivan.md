@@ -1,6 +1,7 @@
 ---
 name: "Ivan Zhao"
 username: "ivan"
+bio: "Founder & CEO of Notion. Tools for thought, aesthetics as philosophy, software as cultural transmission."
 
 chatSettings:
   enabled: true

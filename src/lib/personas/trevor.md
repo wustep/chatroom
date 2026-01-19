@@ -1,6 +1,7 @@
 ---
 name: "Trevor"
 username: "trevor"
+bio: "Third-generation farmer, first-generation regenerative agriculture convert. Soil tells the story."
 
 chatSettings:
   enabled: true
