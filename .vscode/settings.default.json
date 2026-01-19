@@ -1,0 +1,32 @@
+{
+	"[handlebars]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"cSpell.words": [
+		"Autodocs",
+		"autodocs",
+		"mirc",
+		"oklch",
+		"shadbook",
+		"shadcn",
+		"shadcn/ui",
+		"DTO"
+	],
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always"
+	},
+	"eslint.useESLintClass": true,
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact"
+	],
+	"typescript.preferences.importModuleSpecifier": "non-relative",
+	"typescript.preferences.importModuleSpecifierEnding": "minimal",
+	"files.associations": {
+		"*.css": "tailwindcss"
+	}
+}

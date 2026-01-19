@@ -1,0 +1,127 @@
+/**
+ * mIRC Theme - Classic IRC client aesthetic
+ *
+ * Inspired by the classic mIRC chat client with its monospace fonts,
+ * dark backgrounds, and colorful nicknames.
+ */
+
+.theme-mirc:root {
+	/* No border radius - classic flat design */
+	--radius: 0rem;
+
+	/* Main backgrounds - dark terminal style */
+	--background: #1a1a1a;
+	--foreground: #d4d4d4;
+
+	/* Card/Panel backgrounds */
+	--card: #252525;
+	--card-foreground: #e0e0e0;
+
+	/* Popover */
+	--popover: #252525;
+	--popover-foreground: #e0e0e0;
+
+	/* Primary - Classic IRC cyan */
+	--primary: #00ced1;
+	--primary-foreground: #000000;
+
+	/* Secondary */
+	--secondary: #3a3a3a;
+	--secondary-foreground: #d4d4d4;
+
+	/* Muted elements */
+	--muted: #2a2a2a;
+	--muted-foreground: #888888;
+
+	/* Accent - IRC blue */
+	--accent: #4169e1;
+	--accent-foreground: #ffffff;
+
+	/* Destructive - Classic IRC red */
+	--destructive: #ff6347;
+
+	/* Borders */
+	--border: rgba(255, 255, 255, 0.1);
+	--input: rgba(255, 255, 255, 0.15);
+	--ring: #00ced1;
+
+	/* Chart colors */
+	--chart-1: #00ced1;
+	--chart-2: #32cd32;
+	--chart-3: #ffd700;
+	--chart-4: #ff69b4;
+	--chart-5: #ff6347;
+	--chart-6: #4169e1;
+	--chart-7: #ff8c00;
+	--chart-8: #9932cc;
+	--chart-9: #20b2aa;
+	--chart-10: #dda0dd;
+
+	/* Sidebar */
+	--sidebar: #1f1f1f;
+	--sidebar-foreground: #d4d4d4;
+	--sidebar-primary: #00ced1;
+	--sidebar-primary-foreground: #000000;
+	--sidebar-accent: #2a2a2a;
+	--sidebar-accent-foreground: #e0e0e0;
+	--sidebar-border: rgba(255, 255, 255, 0.1);
+	--sidebar-ring: #00ced1;
+
+	/* Typography - Monospace font stack */
+	--font-family: "Lucida Console", "Consolas", "Monaco", "Courier New",
+		monospace;
+}
+
+/* Apply monospace font to body */
+.theme-mirc body {
+	font-family: var(--font-family);
+	font-size: 13px;
+	line-height: 1.4;
+	letter-spacing: 0;
+}
+
+/* Input styling - classic IRC input box */
+.theme-mirc input,
+.theme-mirc textarea {
+	background: #000000;
+	border: 1px solid #444444;
+	color: #ffffff;
+	font-family: var(--font-family);
+	font-size: 13px;
+}
+
+.theme-mirc input:focus,
+.theme-mirc textarea:focus {
+	border-color: #00ced1;
+	outline: none;
+}
+
+/* Button styling - flat, minimal */
+.theme-mirc button {
+	border-radius: 0;
+	font-family: var(--font-family);
+}
+
+/* Scrollbar styling */
+.theme-mirc ::-webkit-scrollbar {
+	width: 12px;
+}
+
+.theme-mirc ::-webkit-scrollbar-track {
+	background: #1a1a1a;
+}
+
+.theme-mirc ::-webkit-scrollbar-thumb {
+	background: #444444;
+	border: 2px solid #1a1a1a;
+}
+
+.theme-mirc ::-webkit-scrollbar-thumb:hover {
+	background: #555555;
+}
+
+/* Card styling - no shadows, flat design */
+.theme-mirc [class*="card"] {
+	box-shadow: none;
+	border: 1px solid var(--border);
+}
