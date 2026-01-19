@@ -8,6 +8,8 @@ export const MAX_AI_PLAYERS_IN_CHAT = 10
 export const MAX_CHAT_ROOM_TOTAL_PLAYERS = 25
 export const MAX_HISTORY_MESSAGES = 15
 export const INACTIVITY_TIMEOUT_MS = 2 * 60 * 1000
+export const ACTIVITY_CHECK_INTERVAL_MS = 60 * 1000 // Check room activity every 60 seconds
+export const LOG_STATS_INTERVAL_MS = 2 * 60 * 1000 // Log room stats every 2 minutes
 
 // AI chat settings
 export const AI_CHAT_PROBABILITY = 0.85

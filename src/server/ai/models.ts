@@ -38,22 +38,37 @@ export const SUPPORTED_CLAUDE_MODELS = [
  * Supported OpenAI models
  * Updated January 2026 with latest model IDs from platform.openai.com
  *
+ * GPT-5.2 family (latest):
+ * - gpt-5.2: Best general-purpose model
+ * - gpt-5.2-pro: More compute for harder problems
+ * - gpt-5.2-codex: Optimized for agentic coding
+ *
+ * GPT-5 family:
+ * - gpt-5, gpt-5-mini, gpt-5-nano: Previous flagship models
+ *
  * GPT-4.1 family:
  * - gpt-4.1: Best instruction following, 1M context window
- * - gpt-4.1-mini: Smaller, faster version
- * - gpt-4.1-nano: Smallest, fastest, most cost-effective
+ * - gpt-4.1-mini, gpt-4.1-nano: Smaller, faster versions
  *
  * Reasoning models (o-series):
  * - o4-mini: Latest small reasoning model, 100K max output
  * - o3, o3-mini, o3-pro: Previous reasoning models
- * - o1, o1-pro: Original reasoning models
+ * - o1, o1-pro, o1-mini: Original reasoning models
  *
  * GPT-4o family:
- * - gpt-4o: Multimodal flagship
- * - gpt-4o-mini: Smaller multimodal model
+ * - gpt-4o, gpt-4o-mini: Multimodal models
  */
 export const SUPPORTED_OPENAI_MODELS = [
-	// GPT-4.1 family (current)
+	// GPT-5.2 family (latest)
+	"gpt-5.2",
+	"gpt-5.2-pro",
+	"gpt-5.2-codex",
+	"gpt-5.2-2025-12-11",
+	// GPT-5 family
+	"gpt-5",
+	"gpt-5-mini",
+	"gpt-5-nano",
+	// GPT-4.1 family
 	"gpt-4.1",
 	"gpt-4.1-mini",
 	"gpt-4.1-nano",

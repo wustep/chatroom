@@ -7,6 +7,7 @@ import http from "http"
 
 import { personas as allPersonas } from "@/lib/personas"
 import { ModelProvider } from "@/server/ai/ModelProvider"
+import * as config from "@/server/config/config"
 import { checkRoomInactivity } from "@/server/core/rooms"
 import { activeUsernames, rooms } from "@/server/core/state"
 import usageRouter from "@/server/routes/usage"
@@ -96,6 +97,6 @@ server.listen(SERVER_PORT, () => {
 	console.log(`Server listening on port ${SERVER_PORT}`)
 	console.log(`Allowed origins: ${process.env.APP_URL}`)
 
-	setInterval(checkRoomInactivity, 30000)
-	setInterval(logRoomStats, 60000)
+	setInterval(checkRoomInactivity, config.ACTIVITY_CHECK_INTERVAL_MS)
+	setInterval(logRoomStats, config.LOG_STATS_INTERVAL_MS)
 })
