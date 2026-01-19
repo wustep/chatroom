@@ -1,13 +1,17 @@
 import { ChevronLeft, Menu, MessageSquare, Hash } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { toast } from "sonner"
 
 import { Chat } from "@/app/pages/Chat"
 import { Button } from "@/components/ui/button"
 import { useSocket } from "@/hooks/useSocket"
+import { useTheme } from "@/styles/themes/ThemeContext"
+import { isValidThemeName, themes, ThemeName } from "@/styles/themes"
 
 const DEFAULT_CHANNELS = ["general", "tech", "philosophy"]
 
 export function ChatChannels() {
+	const { theme, setTheme } = useTheme()
 	const [selectedChannel, setSelectedChannel] = useState<string>("general")
 	const [pinned, setPinned] = useState(() => {
 		const stored = localStorage.getItem("chatroom_sidebar_pinned")
@@ -229,6 +233,42 @@ export function ChatChannels() {
 	)
 
 	const handleSendMessage = (text: string, channelId: string) => {
+		const trimmedText = text.trim()
+
+		// Handle client-side commands
+		if (trimmedText.startsWith("/theme")) {
+			const args = trimmedText.slice(6).trim()
+			const availableThemes = Object.keys(themes).join(", ")
+
+			if (!args) {
+				toast.info(`Current theme: ${theme}. Available themes: ${availableThemes}`)
+				return
+			}
+
+			if (isValidThemeName(args)) {
+				setTheme(args as ThemeName)
+				toast.success(`Theme changed to ${args}`)
+			} else {
+				toast.error(`Invalid theme "${args}". Available themes: ${availableThemes}`)
+			}
+			return
+		}
+
+		if (trimmedText === "/help") {
+			toast.info(
+				"Available commands:\n" +
+					"/join #channel - Join a channel\n" +
+					"/invite PersonaName - Invite AI persona\n" +
+					"/kick PersonaName - Remove AI persona\n" +
+					"/topic \"New topic\" - Set channel topic\n" +
+					"/nick NewName - Change your nickname\n" +
+					"/bio Your bio text - Set your bio\n" +
+					"/theme [light|dark|mirc] - Change theme",
+				{ duration: 8000 },
+			)
+			return
+		}
+
 		console.log(`Sending message to channel ${channelId}: ${text}`)
 		sendMessage(channelId, text)
 	}
